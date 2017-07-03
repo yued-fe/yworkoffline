@@ -30,8 +30,8 @@
             "views":"dist/views"
         },
         "offline":{
-            "static":"dist/offline/1/app.webnovel.com/static",
-            "views":"dist/offline/1/app.webnovel.com/views",
+            "static":"dist/offline/1/static",
+            "views":"dist/offline/1/views",
             "config":"dist/offline/1",
             "offlineConfig":"dist/offline"
         },
