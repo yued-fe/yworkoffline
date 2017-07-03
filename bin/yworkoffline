@@ -1,0 +1,136 @@
+#!/usr/bin/env node
+
+'use strict';
+
+process.title = 'yworkoffline';
+
+// 依赖包文件
+var fs = require('fs');
+var path = require('path');
+var request = require('request');
+var chalk = require('chalk');
+var glob = require('glob');
+var _ = require('lodash');
+var figlet = require('figlet');
+var execSync = require('child_process').execSync;
+var yworkflowExe = require('yworkflow');
+var offline = require('../gulpfile.js');
+var execSync = require('child_process').execSync;
+var optimist = require('optimist')
+    .usage(chalk.red('说明:Yworkoffline是一个前端内嵌页打包的脚手架工具'))
+    .alias('v', 'version')
+    .describe(chalk.green('publish'), ':生成静态资源.模板.离线包');
+
+// 获取命令中参数
+var argv = optimist.argv;
+// 获取 脚本执行路径 && yworkflow 执行路径
+var SHELL_PATH = process.env.PWD.replace(/ /g, '\\ ');
+
+var YWORKFLOW_PATH = path.resolve(__dirname, '..').replace(/ /g, '\\ ');
+
+// 打印出当前正在运行的目录
+console.log(SHELL_PATH , YWORKFLOW_PATH );
+
+/**
+ * 设置yworkoffline默认参数
+ * 配合参数
+ * {path}
+ * 是否升级版本号
+ * @type {Object}
+ */
+var defaults = {
+    "src":{
+        "static":".cache/static",
+        "views":".cache/views",
+        "config":"src/offlineFile/config.json",
+        "offlineConfig":"src/offlineFile/offline_config.json"
+    },
+    "build":{
+        "static":"dist/static",
+        "views":"dist/views"
+    },
+    "offline":{
+        "static":"dist/offline/1/app.webnovel.com/static",
+        "views":"dist/offline/1/app.webnovel.com/views",
+        "config":"dist/offline/1/config.json",
+        "offlineConfig":"dist/offline/offline_config.json"
+    },
+    "zipPath":"dist/offline/",
+    "zipName":"1"
+};
+
+/**
+ * 显示版本信息
+ * @param  {[type]} argv.version [description]
+ * @return {[type]}              [description]
+ */
+if (argv.version) {
+    var configFile = !!(argv['config']) ? argv['config'] : './ywork.config.json';
+    figlet(require('../package.json').version, function(err, data) {
+        if (err) {
+            console.log('Something went wrong...');
+
+            console.log(chalk.green(data));
+            return;
+        }
+        console.log(chalk.red('当前版本:'));
+        console.log(data);
+    });
+}
+
+
+/**
+ * 执行完整任务,生成所有的静态资源等
+ * @param  {[type]} argv.publish [description]
+ * @return {[type]}              [description]
+ */
+if (argv.publish) {
+
+    /**
+	 * 设置默认项目配置
+	 * @type {Object}
+	 */
+	var PROJECT_CONFIG = Object.assign({}, defaults);
+
+	var _progressPath = !!(argv['path']) ? argv['path'] : SHELL_PATH
+	_progressPath = path.resolve(__dirname, _progressPath);
+
+    // 执行 yworkflow 产出 cache 文件
+    try{
+        // 获取当前时间戳
+        var yworkStartTime = (new Date()).getTime();
+        console.log('=======================================');
+        console.log('[Yworkflow Compile] Start.');
+        // 获取 执行目录下的 yworkflow 的.yconfig 文件
+        var yconfig = argv.yconfig ? path.resolve(__dirname, _progressPath + '/' + argv.yconfig) : (glob.sync(path.resolve(__dirname, _progressPath + '/*.yconfig'))[0] || glob.sync(path.resolve(__dirname, _progressPath + '/.yconfig'))[0]);
+        console.log('  ' + yconfig);
+        // 执行 Yworkflow 编译命令 && 输出log
+        console.log(new Buffer(yworkflowExe({ path: yconfig })).toString());
+        // 获取编译之后的时间戳
+        var yworkEndTime = (new Date()).getTime();
+        var _taskUsedTime = (yworkEndTime - yworkStartTime) / 1000 ;
+
+        console.log('[Yworkflow Compile]任务耗时共计:' + _taskUsedTime + '秒');
+        console.log('[Yworkflow Compile] done.');
+    } catch (e) {
+        console.error('yworkoffline 出现错误');
+        console.error(e);
+        return;
+    }
+
+    // 开始打包 产出一份静态资源和模版 && 离线包
+    try{
+        console.log('================= 开始产出 offline 文件 ===================');
+        console.log(SHELL_PATH);
+        console.log( new Buffer( execSync( 'cd ' + YWORKFLOW_PATH + ' && gulp offline --configFile ' + _progressPath + '/yworkoffline.config.json --path ' + _progressPath ) ).toString() );
+        console.log('================= offline 文件 产出成功 ===================');
+    } catch (e) {
+        console.error('产出 build && 离线包错误 出现错误');
+        console.error(e);
+        return;
+    }
+
+
+}
+
+
