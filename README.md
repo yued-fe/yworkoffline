@@ -10,11 +10,11 @@
 
 采用的是全局安装,命令行调用。
 
-##基础配置
+## 基础配置
 
 1.由于工具是基于yworkflow二次开发，所以需要xx.yconfig 文件 ；
 
-.yconfig文件具体配置见 https://github.com/yued-fe/Yworkflow
+    .yconfig文件具体配置见 https://github.com/yued-fe/Yworkflow
 
 2.在项目中新建yworkoffline.config.json配置文件
     
