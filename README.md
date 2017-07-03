@@ -17,27 +17,28 @@
 .yconfig文件具体配置见 https://github.com/yued-fe/Yworkflow
 
 2.在项目中新建yworkoffline.config.json配置文件
-{
-    "src":{
-        "static":".cache/static",
-        "views":".cache/views",
-        "config":"src/offlineFile/config.json",
-        "offlineConfig":"src/offlineFile/offline_config.json"
-    },
-    "build":{
-        "static":"dist/static",
-        "views":"dist/views"
-    },
-    "offline":{
-        "static":"dist/offline/1/app.webnovel.com/static",
-        "views":"dist/offline/1/app.webnovel.com/views",
-        "config":"dist/offline/1",
-        "offlineConfig":"dist/offline"
-    },
-    "buildPath":"dist",
-    "zipPath":"dist/offline",
-    "zipName":"1"
-}
+    
+    {
+        "src":{
+            "static":".cache/static",
+            "views":".cache/views",
+            "config":"src/offlineFile/config.json",
+            "offlineConfig":"src/offlineFile/offline_config.json"
+        },
+        "build":{
+            "static":"dist/static",
+            "views":"dist/views"
+        },
+        "offline":{
+            "static":"dist/offline/1/app.webnovel.com/static",
+            "views":"dist/offline/1/app.webnovel.com/views",
+            "config":"dist/offline/1",
+            "offlineConfig":"dist/offline"
+        },
+        "buildPath":"dist",
+        "zipPath":"dist/offline",
+        "zipName":"1"
+    }
 
 ## 使用方式
 
